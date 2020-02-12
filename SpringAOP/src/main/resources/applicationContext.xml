@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<context:annotation-config></context:annotation-config>
+	<aop:aspectj-autoproxy />
+
+
+
+	<bean id="accounts" class="com.spring.aop.target.Accounts"></bean>
+	<bean id="fundTransfer" class="com.spring.aop.target.FundTransfer"></bean>
+
+	<bean id="logging" class="com.spring.aop.Logging"></bean>
+	<bean id="security" class="com.spring.aop.Security"></bean>
+	<bean id="transaction" class="com.spring.aop.Transaction"></bean>
+
+
+	<aop:config>
+		<aop:pointcut
+			expression="execution(* com.spring.aop.target.Accounts.updateAccount(..))"
+			id="PC1" />
+
+		<aop:aspect ref="logging">
+			<aop:before method="beginLogging" pointcut-ref="PC1" />
+			<aop:after-throwing method="throwsException" pointcut-ref="PC1"/>
+			<aop:after method="endLogging" pointcut-ref="PC1" />
+		</aop:aspect>
+		<aop:aspect ref="security">
+			<aop:before method="verifyUser" pointcut-ref="PC1" />
+			<aop:before method="verifyUsername" pointcut-ref="PC1" />
+			<aop:before method="verifyPassword" pointcut-ref="PC1" />
+		</aop:aspect>
+	</aop:config>
+</beans>

@@ -1,0 +1,10 @@
+Hi ${fname},
+
+This is auto generated message, to let you know that, you have total amount of
+
+${amount} available in your bank account ending with ${accno}.
+
+
+Thanks,
+${team}
+

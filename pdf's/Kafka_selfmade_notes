@@ -1,0 +1,100 @@
+###########################################################
+                Kafka Analysis
+###########################################################
+
+There was one zookeeper and 3 brokers started (Three brokers were created by creating more than one the server.properties by changing their [broker.id=1, listeners=PLAINTEXT://127.0.0.1:9093, log.dirs=/tmp/kafka-logs-1] )
+[Initially when you create the topic, you need to spaecify how many replica's you'll be creating(replicas are nothing but the brokers, in our case we created three)]
+
+> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic my-replicated-topic
+
+
+* First start the zookeeper, by passing config/zookeeper.properties
+[./bin/zookeeper-server-start.sh ./config/zookeeper.properties]
+
+
+* Start first broker by passing config/server.properties
+[./bin/kafka-server-start.sh ./config/server.properties]
+
+
+* Start Second broker by passing config/server-1.properties
+[./bin/kafka-server-start.sh ./config/server-1.properties]
+
+
+* Start third broker by passing config/server-2.properties
+[./bin/kafka-server-start.sh ./config/server-2.properties]
+
+
+
+run producer and consumer from separate terminals: see the ports of the broker
+
+for producer: [./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-replicated-topic]
+for consumer: [./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --from-beginning --topic my-replicated-topic]
+*****************************************************************************************************************************************
+
+**1)dhiraj@dhirajpc:~/com/official/allsoftwares/kafka_2.11-0.11.0.0$ bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+
+Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:
+	Topic: my-replicated-topic	Partition: 0	Leader: 1	Replicas: 1,0,2	Isr: 1,0,2
+
+**2)dhiraj@dhirajpc:~/com/official/allsoftwares/kafka_2.11-0.11.0.0$ bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+
+Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:
+	Topic: my-replicated-topic	Partition: 0	Leader: 0	Replicas: 1,0,2	Isr: 0,2
+
+**3)dhiraj@dhirajpc:~/com/official/allsoftwares/kafka_2.11-0.11.0.0$ bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+
+Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:
+	Topic: my-replicated-topic	Partition: 0	Leader: 2	Replicas: 1,0,2	Isr: 2
+
+dhiraj@dhirajpc:~/com/official/allsoftwares/kafka_2.11-0.11.0.0$
+
+
+
+**************************************************************
+
+*List all the topics: bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+
+then run command to check the status: as in **1)
+By default the Leader is 1 which means broker 1 is the leader(id from server-1.properties)
+
+at this stage Isr(In synch replica is 1,0,2 because non of the broker is killed)
+
+kill the pid of broker 1 by command : ps aux | grep server-1.properties
+
+kill -9 9899
+
+then automatically broker 0 will become the leader: as of **2)
+(broker 0 is configured in server.properties)
+
+at this stage Isr(In synch replica is 0,2 because 1 is already killed)
+
+then kill broker 0 again by command:   ps aux | grep server.properties
+
+kill -9 5678
+
+
+then automatically broker 2 will become leader as you can see in **3)
+at this stage Isr(In synch replica is 2 because 1 and 0 are already killed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

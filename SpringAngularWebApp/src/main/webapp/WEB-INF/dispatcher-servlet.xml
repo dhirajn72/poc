@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.spring.*"></context:component-scan>
+	<mvc:annotation-driven />
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.InternalResourceView" />
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages" />
+	</bean>
+
+
+	<bean id="driverManagerDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/loginapp"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="compass"></property>
+	</bean>
+
+	<bean id="localSessionFactoryBean"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="driverManagerDataSource"></property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.spring.entities</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<map>
+				<entry key="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+				<entry key="hibernate.show_sql" value="true" />
+				<entry key="hibernate.hbm2ddl.auto" value="update" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate"
+		autowire="constructor">
+	</bean>
+	<bean id="hibernateTransactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+		autowire="constructor"></bean>
+
+
+	<bean id="registerDaoImpl" class="com.spring.dao.impl.RegisterDaoImpl"></bean>
+	<bean id="registerValidator" class="com.spring.entities.validators.RegisterValidator"></bean>
+	<bean id="loginValidator" class="com.spring.entities.validators.LoginValidator"></bean>
+	<bean id="" class="com.spring.dao.impl.LoginValidatorDaoImpl"></bean>
+	<bean id="registerTo" class="com.spring.test.to.RegisterTo"></bean>
+	<bean id="passwordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+
+</beans>

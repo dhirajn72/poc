@@ -1,0 +1,40 @@
+Elastic search References
+-------------------------
+
+Elasticsearch is an open-source search engine built on top of Apache LuceneTM, a full-
+text search-engine library. Lucene is arguably the most advanced, high-performance,
+and fully featured search engine library in existence today—both open source and
+proprietary.
+
+
+
+The first order of business is storing employee data. This will take the form of an
+employee document’: a single document represents a single employee. The act of stor‐
+ing data in Elasticsearch is called indexing, but before we can index a document, we
+need to decide where to store it.
+In Elasticsearch, a document belongs to a type, and those types live inside an index.
+You can draw some (rough) parallels to a traditional relational database:
+
+Relational DB ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
+Elasticsearch ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
+An Elasticsearch cluster can contain multiple indices (databases), which in turn con‐
+tain multiple types (tables). These types hold multiple documents (rows), and each
+document has multiple fields (columns)
+
+**********************************************
+
+Elasticsearch tries hard to hide the complexity of distributed systems. Here are some
+of the operations happening automatically under the hood:
+
+Tutorial Conclusion
+--------------------
+• Partitioning your documents into different containers or shards, which can be
+stored on a single node or on multiple nodes
+• Balancing these shards across the nodes in your cluster to spread the indexing
+and search load
+• Duplicating each shard to provide redundant copies of your data, to prevent data
+loss in case of hardware failure
+• Routing requests from any node in the cluster to the nodes that hold the data
+you’re interested in
+• Seamlessly integrating new nodes as your cluster grows or redistributing shards
+to recover from node loss
